@@ -2,7 +2,7 @@
 Summary:	Pass input from an enumerator to an Attoparsec parser
 Name:		ghc-%{pkgname}
 Version:	0.3.1
-Release:	0.1
+Release:	1
 License:	MIT
 Group:		Development/Languages
 Source0:	http://hackage.haskell.org/packages/archive/%{pkgname}/%{version}/%{pkgname}-%{version}.tar.gz
@@ -11,7 +11,9 @@ URL:		http://hackage.haskell.org/package/attoparsec-enumerator/
 BuildRequires:	ghc >= 6.12.3
 BuildRequires:	ghc-prof
 BuildRequires:	ghc-attoparsec
+BuildRequires:	ghc-attoparsec-prof
 BuildRequires:	ghc-enumerator
+BuildRequires:	ghc-enumerator-prof
 BuildRequires:	rpmbuild(macros) >= 1.608
 %requires_releq	ghc
 Requires(post,postun):	/usr/bin/ghc-pkg
@@ -62,8 +64,9 @@ install -d $RPM_BUILD_ROOT%{_libdir}/%{ghcdir}/package.conf.d
 runhaskell Setup.hs copy --destdir=$RPM_BUILD_ROOT
 
 # work around automatic haddock docs installation
-rm -rf %{name}-%{version}-doc
+%{__rm} -rf %{name}-%{version}-doc
 cp -a $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version} %{name}-%{version}-doc
+%{__rm} -rf $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 
 runhaskell Setup.hs register \
 	--gen-pkg-config=$RPM_BUILD_ROOT/%{_libdir}/%{ghcdir}/package.conf.d/%{pkgname}.conf
@@ -79,7 +82,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc NEWS
 %doc %{name}-%{version}-doc/*
 %{_libdir}/%{ghcdir}/package.conf.d/%{pkgname}.conf
 %dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}
@@ -87,10 +89,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/*.a
 %exclude %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/*_p.a
 
-%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/PACKAGE
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/PACKAGE/*.hi
+%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data
+%dir %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Attoparsec
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Attoparsec/*.hi
 
 %files prof
 %defattr(644,root,root,755)
 %{_libdir}/%{ghcdir}/%{pkgname}-%{version}/*_p.a
-%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/PACKAGE/*.p_hi
+%{_libdir}/%{ghcdir}/%{pkgname}-%{version}/Data/Attoparsec/*.p_hi
